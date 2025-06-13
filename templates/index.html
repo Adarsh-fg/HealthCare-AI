@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+  <h1 class="main-title">Welcome to HealthCare AI</h1>
+  <p class="subtitle">Your trusted companion for health insights and guidance</p>
+  
+  <div class="alert alert-info">
+    <strong>Important Notice:</strong> This AI assistant provides general health information only.
+    Always consult healthcare professionals for medical advice, diagnosis, or treatment.
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <img src="https://img.icons8.com/ios-filled/50/search--v1.png" alt="Search Icon">
+      </div>
+      <h3>Symptom Checker</h3>
+      <p>Get insights about potential conditions based on your symptoms</p>
+      <a href="/symptom" class="btn">Check Symptoms</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <img src="https://img.icons8.com/ios-filled/50/chat-message--v1.png" alt="Chat Icon">
+      </div>
+      <h3>Health Assistant</h3>
+      <p>Ask questions and get instant health-related guidance</p>
+      <a href="/assistant" class="btn">Start Chat</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <img src="https://img.icons8.com/ios-filled/50/health-book.png" alt="Health Metrics Icon">
+      </div>
+      <h3>Health Metrics</h3>
+      <p>Track and analyze your vital health measurements</p>
+      <a href="/health-metrics" class="btn">Check Metrics</a>
+    </div>
+  </div>
+</div>
+
+<div class="tips-section">
+  <h2 class="section-title">Health Tips for a Healthy Body</h2>
+  <p class="section-subtitle">Expert advice and practical tips for maintaining your physical and mental wellbeing</p>
+
+  <div class="tips-grid">
+    {% for tip in tips %}
+    <a href="{{ tip.link }}" class="tip-card-link">
+      <article class="tip-card">
+        <div class="tip-image">
+          <img src="{{ tip.image }}" alt="{{ tip.title }}">
+        </div>
+        <div class="tip-content">
+          <span class="tip-category">{{ tip.category }}</span>
+          <h2 class="tip-title">{{ tip.title }}</h2>
+          <p class="tip-content-text">{{ tip.content }}</p>
+        </div>
+      </article>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<footer class="copyright-footer">
+  <div class="footer-content">
+    <p>&copy; 2025 HealthCare-AI. All rights reserved.</p>
+  </div>
+</footer>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-section {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .main-title {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+  }
+
+  .main-title:hover {
+    transform: scale(1.1);
+  }
+
+  .section-title:hover {
+    transform: scale(1.1);
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto 2rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .feature-card {
+    background: #e3f2fd;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.42);
+  }
+
+  .feature-icon {
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-icon img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .feature-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .feature-card p {
+    color: var(--slate-blue);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Health Tips Section Styles */
+  .tips-section {
+    max-width: 1200px;
+    margin: 4rem auto 0;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .section-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .tips-categories {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .category-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    background: white;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .category-btn:hover,
+  .category-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+  }
+
+  .tip-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+    height: 400px;
+  }
+
+  .tip-card:hover {
+    transform: scale(1.1);
+  }
+
+  .tip-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--secondary-color);
+  }
+
+  .tip-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .tip-card:hover .tip-image img {
+    transform: scale(1.1);
+  }
+
+  .tip-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+    z-index: 1;
+  }
+
+  .tip-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 15px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(5px);
+  }
+
+  .tip-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .tip-content-text {
+    color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    margin-bottom: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+
+  @media (max-width: 768px) {
+    .main-title {
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-title {
+      font-size: 2rem;
+    }
+
+    .tips-categories {
+      gap: 0.5rem;
+    }
+
+    .category-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.875rem;
+    }
+
+    .tips-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tip-card {
+      height: 350px;
+    }
+
+    .tip-content {
+      padding: 1.5rem;
+    }
+
+    .tip-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Copyright Footer Styles */
+  .copyright-footer {
+    color: var(--primary-color);
+    padding: 2rem 0;
+    margin-top: 4rem;
+    text-align: center;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .footer-content p {
+    margin: 0.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .copyright-footer {
+      padding: 1.5rem 0;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Symptom Checker{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-container h2 {
+    color: var(--primary-dark);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--slate-blue);
+  }
+
+  .form-container input[type="text"],
+  .form-container select {
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-container input[type="text"]:focus,
+  .form-container select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  .form-container input[type="text"]::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .buttonsymptom {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 1rem;
+  }
+
+  .buttonsymptom:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+
+  .output-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .output {
+    color: var(--text-primary);
+    line-height: 1.8;
+  }
+
+  .output h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  .output ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .output li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .output li:before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 1.5rem;
+      margin: 0 1rem;
+    }
+
+    .form-container h2 {
+      font-size: 1.75rem;
+    }
+  }
+  .symptom-subtitle {
+    text-align: center;
+    color: var(--slate-blue);
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>🔍 Symptom Checker</h2>
+  <p class="symptom-subtitle">Enter the symptoms, severity and duration for the analysis</p>
+  <form method="POST" action="/symptom">
+    <div class="form-group">
+      <label for="symptoms">Symptoms</label>
+      <input type="text" id="symptoms" name="symptoms" placeholder="Enter your symptoms (e.g., cough, fever, headache)" required>
+    </div>
+
+    <div class="form-group">
+      <label for="severity">Severity</label>
+      <select id="severity" name="severity" required>
+        <option value="">Select severity level</option>
+        <option value="mild">Mild - Noticeable but not interfering with daily activities</option>
+        <option value="moderate">Moderate - Somewhat interfering with daily activities</option>
+        <option value="severe">Severe - Significantly interfering with daily activities</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="duration">Duration</label>
+      <select id="duration" name="duration" required>
+        <option value="">Select duration</option>
+        <option value="less_than_day">Less than a day</option>
+        <option value="1_3_days">1-3 days</option>
+        <option value="4_7_days">4-7 days</option>
+        <option value="more_than_week">More than a week</option>
+      </select>
+    </div>
+
+    <button type="submit" class="buttonsymptom">Analyze Symptoms</button>
+  </form>
+  {% if result %}
+  <div class="output-container">
+    <div class="output">{{ result | safe }}</div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

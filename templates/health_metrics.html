@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Health Metrics Checker{% endblock %}
+
+{% block content %}
+<div class="metrics-container">
+  <h2>📊Health Metrics Analysis</h2>
+  <p class="metrics-subtitle">Enter your health measurements for a comprehensive analysis</p>
+
+  <form method="POST" action="/health-metrics" class="metrics-form">
+    <div class="form-group">
+      <label for="age">Age</label>
+      <input type="number" id="age" name="age" min="1" max="120" required placeholder="Enter your age">
+    </div>
+
+    <div class="form-group">
+      <label for="gender">Gender</label>
+      <select id="gender" name="gender" required>
+        <option value="">Select gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="cholesterol">Total Cholesterol (mg/dL)</label>
+      <input type="number" id="cholesterol" name="cholesterol" min="50" max="400" required placeholder="Enter cholesterol level">
+    </div>
+
+    <div class="form-group">
+      <label for="sugar">Blood Sugar (mg/dL)</label>
+      <input type="number" id="sugar" name="sugar" min="25" max="300" required placeholder="Enter blood sugar level">
+    </div>
+
+    <div class="form-group">
+      <label for="systolic">Systolic Blood Pressure (mmHg)</label>
+      <input type="number" id="systolic" name="systolic" min="30" max="200" required placeholder="Enter systolic pressure">
+    </div>
+
+    <div class="form-group">
+      <label for="diastolic">Diastolic Blood Pressure (mmHg)</label>
+      <input type="number" id="diastolic" name="diastolic" min="20" max="200" required placeholder="Enter diastolic pressure">
+    </div>
+
+    <button type="submit" class="btn">Analyze Health Metrics</button>
+  </form>
+
+  {% if result %}
+    <div class="gemini-result">
+      {{ result | safe }}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .metrics-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .metrics-container h2 {
+    color: var(--primary-dark);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .metrics-subtitle {
+    text-align: center;
+    color: var(--slate-blue);
+    margin-bottom: 2rem;
+  }
+
+  .metrics-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--slate-blue);
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  .form-group input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .btn {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+  }
+
+  .results-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
+  .metric-result {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .metric-result:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .metric-result h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+  }
+
+  .metric-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .status-normal {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .status-warning {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+
+  .status-danger {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+  .recommendations {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .recommendations h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+  }
+
+  .recommendations ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .recommendations li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .recommendations li:before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+  }
+
+  @media (max-width: 768px) {
+    .metrics-container {
+      margin: 0 1rem;
+      padding: 1.5rem;
+    }
+
+    .metrics-form {
+      grid-template-columns: 1fr;
+    }
+
+    .metrics-container h2 {
+      font-size: 1.75rem;
+    }
+  }
+</style>
+{% endblock %} 

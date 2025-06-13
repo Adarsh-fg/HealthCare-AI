@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Health Assistant Chat{% endblock %}
+
+{% block extra_css %}
+<style>
+  .chat-box {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 200px); /* Fixed height */
+    min-height: 600px; /* Minimum height */
+  }
+
+  .chat-box h2 {
+    color: var(--primary-dark);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    flex-shrink: 0; /* Prevent header from shrinking */
+  }
+
+  .chat-history {
+    flex: 1; /* Take remaining space */
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 12px;
+    border: 3px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    scroll-behavior: smooth; /* Smooth scrolling */
+  }
+
+  /* Custom scrollbar for chat history */
+  .chat-history::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .chat-history::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+
+  .chat-history::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  .chat-history::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .chat-message {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-message.user {
+    background-color: var(--primary-color);
+    color: white;
+    margin-left: auto;
+  }
+
+  .chat-message.bot {
+    background-color: #f1f5f9;
+    color:rgb(0, 0, 0);
+    margin-right: auto;
+  }
+
+  .chat-message .timestamp {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+  }
+
+  .chat-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-shrink: 0; /* Prevent form from shrinking */
+  }
+
+  .chat-form textarea {
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: none; /* Disable manual resizing */
+    height: 80px; /* Fixed height */
+    transition: border-color 0.3s ease;
+  }
+
+  .chat-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  .chat-form textarea::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .chat-form button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .chat-form button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+
+  .chat-form button:disabled {
+    background-color: var(--text-secondary);
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media (max-width: 768px) {
+    .chat-box {
+      height: calc(100vh - 150px); /* Adjust height for mobile */
+      min-height: 500px;
+      padding: 1.5rem;
+      margin: 0 1rem;
+    }
+
+    .chat-box h2 {
+      font-size: 1.75rem;
+    }
+
+    .chat-message {
+      max-width: 90%;
+    }
+  }
+  .assistant-subtitle {
+    text-align: center;
+    color: var(--slate-blue);
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-box">
+  <h2>💬 Health Assistant Chat</h2>
+  <p class="assistant-subtitle">Chat with AI from clearing the doubt that are in your mind</p>
+  <div class="chat-history" id="chat-history">
+    {% if chat_history %}
+      {% for message in chat_history %}
+        <div class="chat-message {{ message.role }}">
+          {{ message.content | safe }}
+          <div class="timestamp">{{ message.timestamp }}</div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <form method="POST" action="/assistant" class="chat-form" id="chat-form">
+    <textarea name="question" rows="3" placeholder="Ask any health-related question..." required></textarea>
+    <button type="submit" id="send-button">Send Message</button>
+    <div id="spinner" class="spinner"></div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Auto-scroll to bottom of chat history
+  function scrollToBottom() {
+    const chatHistory = document.getElementById('chat-history');
+    if (chatHistory) {
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+  }
+
+  // Scroll to bottom on page load
+  document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+  // Handle form submission
+  const chatForm = document.getElementById('chat-form');
+  const sendButton = document.getElementById('send-button');
+  const spinner = document.getElementById('spinner');
+
+  if (chatForm) {
+    chatForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Disable the send button and show spinner
+      sendButton.disabled = true;
+      spinner.style.display = 'block';
+
+      // Submit the form
+      this.submit();
+    });
+  }
+
+  // Create a MutationObserver to watch for changes in the chat history
+  const chatHistory = document.getElementById('chat-history');
+  if (chatHistory) {
+    const observer = new MutationObserver(scrollToBottom);
+    observer.observe(chatHistory, { childList: true, subtree: true });
+  }
+</script>
+{% endblock %}
